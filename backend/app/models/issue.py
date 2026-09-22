@@ -36,10 +36,18 @@ class Issue(Base):
     number: Mapped[int] = mapped_column(Integer, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    type: Mapped[IssueType] = mapped_column(Enum(IssueType, name="issue_type"), nullable=False)
-    priority: Mapped[IssuePriority] = mapped_column(Enum(IssuePriority, name="issue_priority"), nullable=False)
+    type: Mapped[IssueType] = mapped_column(
+        Enum(IssueType, name="issue_type", values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        nullable=False,
+    )
+    priority: Mapped[IssuePriority] = mapped_column(
+        Enum(IssuePriority, name="issue_priority", values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        nullable=False,
+    )
     status: Mapped[IssueStatus] = mapped_column(
-        Enum(IssueStatus, name="issue_status"), default=IssueStatus.TODO, nullable=False
+        Enum(IssueStatus, name="issue_status", values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        default=IssueStatus.TODO,
+        nullable=False,
     )
     assignee_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     reporter_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
