@@ -10,7 +10,7 @@ def _create_project(client, key="IT"):
 
 
 def test_create_issue_generates_sequential_key(client, admin_user):
-    login(client, "admin@test.local", "admin123")
+    login(client, "admin@test.app", "admin123")
     project = _create_project(client)
 
     r1 = client.post(
@@ -29,10 +29,10 @@ def test_create_issue_generates_sequential_key(client, admin_user):
 
 
 def test_non_member_cannot_create_issue(client, admin_user, member_user):
-    login(client, "admin@test.local", "admin123")
+    login(client, "admin@test.app", "admin123")
     project = _create_project(client)
 
-    login(client, "member@test.local", "member123")
+    login(client, "member@test.app", "member123")
     response = client.post(
         f"/api/v1/projects/{project['id']}/issues",
         json={"title": "Should fail", "type": "task", "priority": "low"},
@@ -41,7 +41,7 @@ def test_non_member_cannot_create_issue(client, admin_user, member_user):
 
 
 def test_status_update_logs_history(client, admin_user):
-    login(client, "admin@test.local", "admin123")
+    login(client, "admin@test.app", "admin123")
     project = _create_project(client)
     issue = client.post(
         f"/api/v1/projects/{project['id']}/issues",

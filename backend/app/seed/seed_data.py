@@ -16,19 +16,19 @@ def run() -> None:
 
         admin = User(
             name="Admin",
-            email="admin@minijira.local",
+            email="admin@minijira.app",
             password_hash=hash_password("admin123"),
             role=UserRole.ADMIN,
         )
         member1 = User(
             name="Khanif",
-            email="khanif@minijira.local",
+            email="khanif@minijira.app",
             password_hash=hash_password("member123"),
             role=UserRole.MEMBER,
         )
         member2 = User(
             name="Dewi",
-            email="dewi@minijira.local",
+            email="dewi@minijira.app",
             password_hash=hash_password("member123"),
             role=UserRole.MEMBER,
         )
@@ -69,7 +69,7 @@ def run() -> None:
             )
 
         db.commit()
-        print("Seed data created: admin@minijira.local / admin123, khanif@minijira.local / member123")
+        print("Seed data created: admin@minijira.app / admin123, khanif@minijira.app / member123")
     finally:
         db.close()
 

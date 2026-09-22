@@ -63,7 +63,7 @@ def client(db_session):
 def admin_user(db_session):
     user = User(
         name="Admin",
-        email="admin@test.local",
+        email="admin@test.app",
         password_hash=hash_password("admin123"),
         role=UserRole.ADMIN,
     )
@@ -77,7 +77,7 @@ def admin_user(db_session):
 def member_user(db_session):
     user = User(
         name="Member",
-        email="member@test.local",
+        email="member@test.app",
         password_hash=hash_password("member123"),
         role=UserRole.MEMBER,
     )

@@ -3,16 +3,16 @@ from tests.conftest import login
 
 def test_login_success(client, admin_user):
     response = client.post(
-        "/api/v1/auth/login", json={"email": "admin@test.local", "password": "admin123"}
+        "/api/v1/auth/login", json={"email": "admin@test.app", "password": "admin123"}
     )
     assert response.status_code == 200
-    assert response.json()["user"]["email"] == "admin@test.local"
+    assert response.json()["user"]["email"] == "admin@test.app"
     assert "access_token" in response.cookies
 
 
 def test_login_wrong_password(client, admin_user):
     response = client.post(
-        "/api/v1/auth/login", json={"email": "admin@test.local", "password": "wrong"}
+        "/api/v1/auth/login", json={"email": "admin@test.app", "password": "wrong"}
     )
     assert response.status_code == 401
 
@@ -23,14 +23,14 @@ def test_me_requires_auth(client):
 
 
 def test_me_returns_current_user(client, admin_user):
-    login(client, "admin@test.local", "admin123")
+    login(client, "admin@test.app", "admin123")
     response = client.get("/api/v1/auth/me")
     assert response.status_code == 200
-    assert response.json()["email"] == "admin@test.local"
+    assert response.json()["email"] == "admin@test.app"
 
 
 def test_logout_clears_session(client, admin_user):
-    login(client, "admin@test.local", "admin123")
+    login(client, "admin@test.app", "admin123")
     response = client.post("/api/v1/auth/logout")
     assert response.status_code == 200
 

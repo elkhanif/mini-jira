@@ -19,9 +19,9 @@ docker compose exec backend python -m app.seed.seed_data
 ```
 
 Seeded accounts (password shown after email):
-- `admin@minijira.local` / `admin123` (Admin)
-- `khanif@minijira.local` / `member123` (Member)
-- `dewi@minijira.local` / `member123` (Member)
+- `admin@minijira.app` / `admin123` (Admin)
+- `khanif@minijira.app` / `member123` (Member)
+- `dewi@minijira.app` / `member123` (Member)
 
 Frontend: http://localhost:3000
 Backend docs: http://localhost:8000/docs
