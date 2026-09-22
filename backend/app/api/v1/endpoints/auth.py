@@ -27,7 +27,7 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
         max_age=COOKIE_MAX_AGE,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="lax",
+        samesite=settings.cookie_samesite,
         path="/",
     )
     return LoginResponse(user=UserOut.model_validate(user))
@@ -35,7 +35,12 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
 
 @router.post("/logout")
 def logout(response: Response) -> dict:
-    response.delete_cookie(key="access_token", path="/")
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
+    )
     return {"detail": "Logged out"}
 
 
