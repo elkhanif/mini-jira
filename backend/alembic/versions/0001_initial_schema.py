@@ -20,12 +20,9 @@ issue_status = sa.Enum("todo", "in_progress", "review", "done", name="issue_stat
 
 
 def upgrade() -> None:
-    bind = op.get_bind()
-    user_role.create(bind, checkfirst=True)
-    issue_type.create(bind, checkfirst=True)
-    issue_priority.create(bind, checkfirst=True)
-    issue_status.create(bind, checkfirst=True)
-
+    # Enum types (user_role, issue_type, issue_priority, issue_status) are
+    # created automatically by create_table below — do not pre-create them
+    # here, or Postgres raises "type already exists" on the second attempt.
     op.create_table(
         "users",
         sa.Column("id", sa.Integer(), primary_key=True),
@@ -109,9 +106,4 @@ def downgrade() -> None:
     op.drop_table("project_members")
     op.drop_table("projects")
     op.drop_table("users")
-
-    bind = op.get_bind()
-    issue_status.drop(bind, checkfirst=True)
-    issue_priority.drop(bind, checkfirst=True)
-    issue_type.drop(bind, checkfirst=True)
-    user_role.drop(bind, checkfirst=True)
+    # Enum types are dropped automatically along with their owning table.
