@@ -27,8 +27,8 @@ def run() -> None:
             role=UserRole.MEMBER,
         )
         member2 = User(
-            name="Dewi",
-            email="dewi@minijira.app",
+            name="Dian",
+            email="dian@minijira.app",
             password_hash=hash_password("member123"),
             role=UserRole.MEMBER,
         )
