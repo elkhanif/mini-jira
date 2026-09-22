@@ -1,4 +1,8 @@
-"""Seed development data. Run with: python -m app.seed.seed_data"""
+"""Seed development data. Run with: python -m app.seed.seed_data
+
+Safe to run multiple times: users are created once, and each project is
+created only if its key doesn't already exist.
+"""
 from app.core.security import hash_password
 from app.db.session import SessionLocal
 from app.models.issue import Issue, IssuePriority, IssueStatus, IssueType
@@ -7,7 +11,46 @@ from app.models.project_member import ProjectMember
 from app.models.user import User, UserRole
 
 
-def _create_project(db, *, key, name, description, admin, members, issues):
+def _ensure_users(db):
+    admin = db.query(User).filter(User.email == "admin@minijira.app").first()
+    if admin is None:
+        admin = User(
+            name="Admin",
+            email="admin@minijira.app",
+            password_hash=hash_password("admin123"),
+            role=UserRole.ADMIN,
+        )
+        db.add(admin)
+
+    member1 = db.query(User).filter(User.email == "khanif@minijira.app").first()
+    if member1 is None:
+        member1 = User(
+            name="Khanif",
+            email="khanif@minijira.app",
+            password_hash=hash_password("member123"),
+            role=UserRole.MEMBER,
+        )
+        db.add(member1)
+
+    member2 = db.query(User).filter(User.email == "dian@minijira.app").first()
+    if member2 is None:
+        member2 = User(
+            name="Dian",
+            email="dian@minijira.app",
+            password_hash=hash_password("member123"),
+            role=UserRole.MEMBER,
+        )
+        db.add(member2)
+
+    db.flush()
+    return admin, member1, member2
+
+
+def _ensure_project(db, *, key, name, description, admin, members, issues):
+    if db.query(Project).filter(Project.key == key).first() is not None:
+        print(f"Project {key} already exists, skipping.")
+        return
+
     project = Project(key=key, name=name, description=description, created_by=admin.id)
     db.add(project)
     db.flush()
@@ -28,40 +71,16 @@ def _create_project(db, *, key, name, description, admin, members, issues):
                 reporter_id=admin.id,
             )
         )
-    return project
+    print(f"Project {key} created.")
 
 
 def run() -> None:
     db = SessionLocal()
     try:
-        if db.query(User).first() is not None:
-            print("Seed data already present, skipping.")
-            return
-
-        admin = User(
-            name="Admin",
-            email="admin@minijira.app",
-            password_hash=hash_password("admin123"),
-            role=UserRole.ADMIN,
-        )
-        member1 = User(
-            name="Khanif",
-            email="khanif@minijira.app",
-            password_hash=hash_password("member123"),
-            role=UserRole.MEMBER,
-        )
-        member2 = User(
-            name="Dian",
-            email="dian@minijira.app",
-            password_hash=hash_password("member123"),
-            role=UserRole.MEMBER,
-        )
-        db.add_all([admin, member1, member2])
-        db.flush()
-
+        admin, member1, member2 = _ensure_users(db)
         team = [admin, member1, member2]
 
-        _create_project(
+        _ensure_project(
             db,
             key="IT",
             name="IT Operations",
@@ -76,7 +95,7 @@ def run() -> None:
             ],
         )
 
-        _create_project(
+        _ensure_project(
             db,
             key="WEB",
             name="IT Web Developer",
@@ -91,7 +110,7 @@ def run() -> None:
             ],
         )
 
-        _create_project(
+        _ensure_project(
             db,
             key="SYS",
             name="IT System Developer",
@@ -106,7 +125,7 @@ def run() -> None:
             ],
         )
 
-        _create_project(
+        _ensure_project(
             db,
             key="AST",
             name="IT Asset Management",
@@ -122,7 +141,7 @@ def run() -> None:
         )
 
         db.commit()
-        print("Seed data created: admin@minijira.app / admin123, khanif@minijira.app / member123, dian@minijira.app / member123")
+        print("Seed complete: admin@minijira.app / admin123, khanif@minijira.app / member123, dian@minijira.app / member123")
     finally:
         db.close()
 
