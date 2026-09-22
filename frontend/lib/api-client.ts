@@ -1,4 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+// Same-origin path — next.config.mjs rewrites /api/* to the backend server,
+// so the browser only ever talks to this app's own domain and the session
+// cookie the backend sets is stored as first-party (see BACKEND_URL).
+const API_URL = "/api/v1";
 
 export class ApiError extends Error {
   status: number;
