@@ -20,5 +20,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // /api/* is rewritten straight through to the backend (which enforces its
+  // own auth) — the guard here must not intercept it, or the login call
+  // itself gets redirected before it ever reaches the backend.
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
